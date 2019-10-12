@@ -16,7 +16,7 @@
     Dashboard
     <small>Panel de control</small> 
   </h1>
-
+  <p> hola, {{ Auth::user()->name }}  </p>
 </section>
    
 

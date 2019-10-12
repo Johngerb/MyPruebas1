@@ -44,4 +44,8 @@ class User extends Authenticatable
     {
     $this->notify(new MiVariableResetPW($token));
     }
+    
+    public function roles(){
+        return $this->belongsToMany(Rol::class, 'user_rol', 'user_id', 'rol_id');
+    }
 }
