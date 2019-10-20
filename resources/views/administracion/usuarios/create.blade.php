@@ -58,7 +58,7 @@
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                                 <label>Edad (*)</label>
-                                <input value="{{old('edad')}}"  class="form-control" type="number" id="edad" name="edad" placeholder="Ingrese la Edad" required>
+                                <input onkeypress="return event.charCode >=48" min="18" max="99"  value="{{old('edad')}}"  class="form-control" type="number" id="edad" name="edad" placeholder="Ingrese la Edad" required>
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
@@ -86,7 +86,7 @@
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                             <label>Roles</label>
-                            <select required class="form-control select2" multiple="multiple" data-placeholder="Seleccione los roles" name ="roles[]" style="width: 100%;">
+                            <select id="roles" required class="form-control select2" multiple="multiple" data-placeholder="Seleccione los roles" name ="roles[]" style="width: 100%;">
                                 @foreach($roles as $rol)
                                     <option value="{{$rol->id}}" >  {{ $rol->rol }} </option>
                                 @endforeach
@@ -122,11 +122,7 @@ $(function() {
 
 </script>
 
-<script>
-    $(function() {
-        $(".select2").select2();
-    });
-</script>
+
 
 
 <script type="text/javascript">    
@@ -134,6 +130,12 @@ $(function() {
       input1.addEventListener('input',function(){
         if (this.value.length > 10) 
           this.value = this.value.slice(0,10); 
+      })
+
+      var input2=  document.getElementById('edad');
+      input2.addEventListener('input',function(){
+        if (this.value.length > 2) 
+          this.value = this.value.slice(0,2); 
       })
 
 </script>
@@ -229,15 +231,17 @@ function validarEmail() {
       
 
         if(data == "existe"){
-          swal({
-        title: "¡Oh no!",
-        text: "El email que ingresaste ya se encuentra registrado en el sistema",
-        type: "warning",
-        button: "Ok",
+            
+         swal({
+            title: "¡Oh no!",
+            text: "El email que ingresaste ya se encuentra registrado en el sistema",
+            type: "warning",
+            button: "Ok",
         });
+        
         document.getElementById("email").value = "";
         document.getElementById("email").style.borderColor = "red";
-          
+       
 
         }else{
           document.getElementById("email").style.borderColor = "#cacaca";
@@ -252,6 +256,41 @@ function validarEmail() {
 }
 
 
+$(document).ready(function() {
+          $('#roles').select2({
+            ajax: {
+                url: "<?php echo route('cargar_roles') ?>",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                dataType: 'json',
+                processResults: function (data) {
+                    console.log(JSON.stringify(data));
+                    data.page = data.page || 1;
+                    return {
+                        results: data.items.map(function (item) {
+                            return {
+                                id: item.id,
+                                text: item.rol
+                            };
+                        }),
+                        pagination: {
+                            more: data.pagination
+                        }
+                    }
+                },
+                cache: true,
+                delay: 250
+            },
+            placeholder: 'Seleccion al menos 1 rol',
+//                minimumInputLength: 2,
+            multiple: true
+        });
+
+        });
 
 </script>
 @endsection

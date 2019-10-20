@@ -47,7 +47,7 @@ class UserController extends Controller
 
        }
 
-       
+
        public function buscar_email_usuario(Request $request)
        {
    
@@ -74,6 +74,20 @@ class UserController extends Controller
    
        }
 
+
+    public function cargar_roles(Request $request)
+       {
+           $search = $request->get('search');
+   
+           $data = DB::table('roles')
+           ->where('roles.rol', 'like', $search.'%')
+           ->where('roles.estado', '=', 1)
+           ->paginate(5);
+   
+           //$data=  DB::select(" select id, nombre from grupocontactos where nombre like  ? and estado=1 and id in (select grupo_id from contacto_grupo_contacto where contacto_id in (select id from contactos where id_user = ?))", ['"%' . $search . '%"', Auth::user()->id] );
+          // $data = GrupoContacto::select(['id', 'nombres_apellidos'])->where('nombres_apellidos', 'like', '%' . $search . '%')->where('estado', 1)->where('activo',1)->orderBy('nombres_apellidos')->where('id_user', Auth::user()->id)->paginate(5);
+           return response()->json(['items' => $data->toArray()['data'], 'pagination' => $data->nextPageUrl() ? true : false]);
+       }
 
 
 
