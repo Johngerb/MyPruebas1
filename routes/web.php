@@ -23,5 +23,8 @@ Route::group(['middleware' => 'auth'], function()
 {
     Route::get('/administracion','HomeController@administracion');
     Route::get('administracion/roles_ajax', 'RolController@roles_ajax'); 
-    Route::resource('administracion/roles', 'RolController');   
+    Route::resource('administracion/roles', 'RolController'); 
+    Route::resource('administracion/usuarios', 'UserController');
+    Route::get('administracion/usuarios_ajax', 'UserController@usuarios_ajax');  
+    
 });
