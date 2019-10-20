@@ -25,7 +25,7 @@
         </div><!-- /.box-header -->
         <div class="box-body">
 
-        <form class="form-horizontal" id="form" method="post" action="{{ route('roles.store')}}"  enctype="multipart/form-data"> 
+        <form class="form-horizontal" id="form" method="post" action="{{ route('usuarios.store')}}"  enctype="multipart/form-data"> 
            
                 @csrf <!-- para hacer Proteger   -->
 
@@ -33,7 +33,7 @@
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                             <label>Nombres (*)</label>
-                            <input class="form-control" type="text" id="name" name="name" placeholder="Ingrese los Nombres" required>
+                            <input value="{{old('name')}}"  class="form-control" type="text" id="name" name="name" placeholder="Ingrese los Nombres" required>
                         </div>
                     </div>
 
@@ -41,14 +41,14 @@
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                                 <label>Apellidos (*)</label>
-                                <input class="form-control" type="text" id="apellidos" name="apellidos" placeholder="Ingrese los Apellidos" required>
+                                <input value="{{old('apellidos')}}" class="form-control" type="text" id="apellidos" name="apellidos" placeholder="Ingrese los Apellidos" required>
                          </div>
                    </div>
 
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                                 <label>Cedula (*)</label>
-                                <input class="form-control" type="text" id="cedula" name="cedula" placeholder="Ingrese la Cedula" required>
+                                <input onblur="validarCedula()" value="{{old('cedula')}}" class="form-control" type="text" id="cedula" name="cedula" placeholder="Ingrese la Cedula" required onkeypress="return soloNumeros(event)"  >
                          </div>
                      </div>  
 
@@ -58,13 +58,13 @@
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                                 <label>Edad (*)</label>
-                                <input class="form-control" type="number" id="edad" name="edad" placeholder="Ingrese la Edad" required>
+                                <input value="{{old('edad')}}"  class="form-control" type="number" id="edad" name="edad" placeholder="Ingrese la Edad" required>
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
                         <div class="form-group">
                                 <label>Email (*)</label>
-                                <input class="form-control" type="email" id="email" name="email" placeholder="Ingrese El mail" required>
+                                <input onblur="validarEmail()" value="{{old('email')}}" class="form-control" type="email" id="email" name="email" placeholder="Ingrese El mail" required>
                         </div>
                     </div>
                     <div class="col-md-4 col-xs-12">
@@ -128,4 +128,130 @@ $(function() {
     });
 </script>
 
+
+<script type="text/javascript">    
+  var input1=  document.getElementById('cedula');
+      input1.addEventListener('input',function(){
+        if (this.value.length > 10) 
+          this.value = this.value.slice(0,10); 
+      })
+
+</script>
+
+<!-- validar cedula !-->
+<script type="text/javascript">    
+
+function validarCedula() 
+{
+    var x = document.getElementById("cedula");
+    var cedula = x.value;
+   
+    $.ajaxSetup(
+    {
+       headers:
+        {
+           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+  
+    });
+  
+    if(cedula.length > 0)
+    {        
+        $.ajax(
+        {
+            type:'POST',
+            url: "<?php echo route('buscar_cedula_usuario') ?>",
+            data:{cedula:cedula},
+            beforeSend: function() 
+            {
+                $(".loader").show();
+            },
+
+            success:function(data)
+            {
+                $(".loader").hide();
+            
+                if(data == "existe")
+                {
+                    swal(
+                    {
+                        title: "Lo sentimos!",
+                        text: "La cédula ingresada ya se encuentra registrada",
+                        type: "warning",
+                        button: "Ok",
+                        });
+                    document.getElementById("cedula").value = "";
+                    document.getElementById("cedula").style.borderColor = "red";
+                }
+                else
+                {
+                    document.getElementById("cedula").style.borderColor = "#b5b5b5";
+                }
+            }
+        });
+  
+    }
+    
+}
+  
+function validarEmail() {
+  var x = document.getElementById("email");
+  var email = x.value;
+ 
+  $.ajaxSetup({
+
+    headers: {
+
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+
+    });
+
+    if(email.length > 0){
+
+
+    $.ajax({
+
+      type:'POST',
+
+      url: "<?php echo route('buscar_email_usuario') ?>",
+
+
+      data:{email:email},
+        beforeSend: function() {
+        $(".loader").show();
+      },
+
+      success:function(data){
+        
+        $(".loader").hide();
+        
+      
+
+        if(data == "existe"){
+          swal({
+        title: "¡Oh no!",
+        text: "El email que ingresaste ya se encuentra registrado en el sistema",
+        type: "warning",
+        button: "Ok",
+        });
+        document.getElementById("email").value = "";
+        document.getElementById("email").style.borderColor = "red";
+          
+
+        }else{
+          document.getElementById("email").style.borderColor = "#cacaca";
+        }
+
+
+      }
+
+      });
+
+    }
+}
+
+
+
+</script>
 @endsection

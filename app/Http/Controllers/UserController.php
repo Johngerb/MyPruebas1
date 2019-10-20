@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
-use App\Rol;
-use App\Http\Requests\UserRequest;
-
 use DataTables;
+use Illuminate\Support\Facades\Redirect;
+use App\Rol;
+use App\User;
+use App\UserRol;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -22,6 +25,57 @@ class UserController extends Controller
         $usuarios = User::where('estado',1)->orderBy('id')->get();
          return View('administracion.usuarios.index',compact('usuarios'));
     }
+
+    public function buscar_cedula_usuario(Request $request)
+    {
+       if($request->ajax()){
+          
+           $cedula=$request->cedula;
+           $usuarios = User::where('cedula', $cedula)->get();
+       
+                if(count($usuarios) > 0) {
+      
+                   return response()->json("existe");
+    
+                }else{
+
+                 return response()->json("no_existe");
+
+                }
+           } 
+
+
+       }
+
+       
+       public function buscar_email_usuario(Request $request)
+       {
+   
+           if($request->ajax()){
+             
+               $email=$request->email;
+
+               $usuarios= User::where('email', $email)->get();
+               if(count($usuarios) > 0) {
+                return response()->json("existe");
+    
+               }else{
+              
+                return response()->json("no_existe");
+    
+               }
+    
+               
+    
+           }
+   
+   
+       
+   
+       }
+
+
+
 
     /**
      * Show the form for creating a new resource.
