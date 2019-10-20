@@ -182,9 +182,22 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+        $user = User::find($id);
+        $user->estado = 0;
+        $user->save();
+
+        DB::table('user_rol')->where('user_id', $user->id)->delete();
+
+
+        $message = "Eliminado Correctamente";
+        if ($request->ajax()) {
+            return response()->json([
+               
+                'message' => $message
+            ]);
+        }
     }
 
 

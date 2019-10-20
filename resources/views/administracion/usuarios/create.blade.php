@@ -176,8 +176,7 @@ function validarCedula()
                 if(data == "existe")
                 {
                     swal(
-                    {
-                        title: "Lo sentimos!",
+                    {   title: "Lo sentimos!",
                         text: "La cédula ingresada ya se encuentra registrada",
                         type: "warning",
                         button: "Ok",
