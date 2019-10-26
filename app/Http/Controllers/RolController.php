@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DataTables;
 use App\Rol;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Crypt;
 
 class RolController extends Controller
 {
@@ -71,7 +72,8 @@ class RolController extends Controller
      */
     public function edit($id)
     {
-        $rol = Rol::find($id);
+        $nuevo_id= Crypt::decrypt($id);
+        $rol = Rol::find($nuevo_id);
         
         return view('administracion.roles.edit',compact('rol'));
     }
@@ -141,9 +143,10 @@ class RolController extends Controller
             
                   ->addColumn('accion', function($row){
 
-                      $url = route('roles.edit',['parameters' => $row->id]);
+                    $id_encriptado= Crypt::encrypt($row->id);  
+                    $url = route('roles.edit',['parameters' => $id_encriptado]);
  
-                         $btn = '<a title="Editar" style="cursor:pointer;" href="'.$url. '" role="button"><i class="fa fa-edit"></i></a> <a title="Eliminar" style="cursor:pointer;"   onclick="eliminar_rol('.$row->id.')" class="btn-delete" role="button"><i class="fa fa-trash"></i></a>';
+                         $btn = '<a title="Editar" style="cursor:pointer;" href="'.$url. '" role="button"><i class="fa fa-edit"></i></a> <a title="Eliminar" style="cursor:pointer;"   onclick="eliminar_rol('.$id_encriptado.')" class="btn-delete" role="button"><i class="fa fa-trash"></i></a>';
    
                           return $btn;
                   })

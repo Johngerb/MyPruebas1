@@ -21,6 +21,12 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function()
 {
+    
+    Route::get('/hola',['middleware' => 'edad', function()
+    {
+        return "ingresaste";
+    }]);
+    
     Route::get('/administracion','HomeController@administracion');
     Route::get('administracion/roles_ajax', 'RolController@roles_ajax'); 
     Route::resource('administracion/roles', 'RolController'); 
@@ -31,3 +37,4 @@ Route::group(['middleware' => 'auth'], function()
     Route::get('administracion/cargar_roles', 'UserController@cargar_roles')->name('cargar_roles');  
     
 });
+
