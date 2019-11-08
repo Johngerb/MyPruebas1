@@ -38,3 +38,11 @@ Route::group(['middleware' => 'auth'], function()
     
 });
 
+Route::get('token', 'ApiController@show_token');  
+Route::get('posts', 'WebServiceController@obtener_post');  
+Route::get('detalle/{id}', 'WebServiceController@buscar_post')->name('detalle'); 
+Route::post('guardar/post', 'WebServiceController@guardar_post')->name('guardar_post'); 
+Route::get('formulario', 'WebServiceController@mostrar_formulario'); 
+Route::get('formulario/actualizar', 'WebServiceController@mostrar_formulario2'); 
+
+Route::put('actualizar/post', 'WebServiceController@actualizar_post')->name('actualizar'); 
